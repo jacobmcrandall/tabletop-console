@@ -1,0 +1,10 @@
+- bputting together blinka
+    -https://learn.adafruit.com/circuitpython-libraries-on-any-computer-with-mcp2221/windows
+    - https://learn.adafruit.com/circuitpython-libraries-on-any-computer-with-mcp2221/running-circuitpython-code-without-circuitpython
+        - general docs  ^
+    https://learn.adafruit.com/adafruit-pca9548-8-channel-stemma-qt-qwiic-i2c-multiplexer
+
+
+PINOUTS:
+https://learn.adafruit.com/circuitpython-libraries-on-any-computer-with-mcp2221/pinout
+https://learn.adafruit.com/qwiik-stemma-qt-5-port-hub/pinouts

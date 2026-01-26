@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://b0dhkwqy20bdd"]
+
+[ext_resource type="Script" uid="uid://ch7ikx52bset4" path="res://pong/paddle/Paddle.cs" id="1_ybnpg"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_y4u2a"]
+size = Vector2(21, 52)
+
+[node name="Paddle" type="CharacterBody2D"]
+script = ExtResource("1_ybnpg")
+
+[node name="Polygon2D" type="Polygon2D" parent="."]
+polygon = PackedVector2Array(-11, -11, 10, -11, 10, 41, -11, 41)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, 15)
+shape = SubResource("RectangleShape2D_y4u2a")
