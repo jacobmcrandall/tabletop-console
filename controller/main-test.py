@@ -83,6 +83,3 @@ while True:
     
     if len(inputs) > 0:
         print(inputs)
-    # time.sleep(0.01)
-
-mplexer[0].unlock();

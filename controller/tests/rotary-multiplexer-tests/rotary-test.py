@@ -1,15 +1,11 @@
-# SPDX-FileCopyrightText: 2021 John Furcean
-# SPDX-License-Identifier: MIT
-
 """I2C rotary encoder simple test example."""
+#Specifically modified for not being used in the active multiplexer
 
 import os
 
 os.environ["BLINKA_MCP2221"]="1"
 
 import board
-import adafruit_tca9548a
-
 
 from adafruit_seesaw import digitalio, rotaryio, seesaw
 
@@ -20,8 +16,7 @@ from adafruit_seesaw import digitalio, rotaryio, seesaw
 
 i2c = board.I2C()  # uses board.SCL and board.SDA
 # i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
-mplexer = adafruit_tca9548a.TCA9548A(i2c)
-seesaw = seesaw.Seesaw(mplexer[0], addr=0x36)
+seesaw = seesaw.Seesaw(i2c, addr=0x36)
 
 seesaw_product = (seesaw.get_version() >> 16) & 0xFFFF
 print(f"Found product {seesaw_product}")

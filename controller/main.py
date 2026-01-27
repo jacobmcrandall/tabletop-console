@@ -1,16 +1,11 @@
-# SPDX-FileCopyrightText: 2021 Carter Nelson for Adafruit Industries
-# SPDX-License-Identifier: MIT
-
-# This example shows using TCA9548A to perform a simple scan for connected devices
-
 import os
 import json
 
+# This must be set before import of board for the correct board to properly load
 os.environ["BLINKA_MCP2221"]="1"
 
 import board
-#our multiplexer
-import adafruit_tca9548a
+import adafruit_tca9548a # our multiplexer
 from rainbowio import colorwheel
 
 from adafruit_seesaw import digitalio, neopixel, rotaryio, seesaw
@@ -19,15 +14,14 @@ from adafruit_neokey.neokey1x4 import NeoKey1x4
 from controller import Controller
 from sockethelper import SocketHelper
 
+printInputsMode = False
+
 # Create I2C bus as normal
 i2c = board.I2C()  # uses board.SCL and board.SDA
 #i2c = board.STEMMA_I2C()  # For using the built-in STEMMA QT connector on a microcontroller
 
 # Create the TCA9548A object and give it the I2C bus
 mplexer = adafruit_tca9548a.TCA9548A(i2c)
-
-#neokey = NeoKey1x4(i2c_bus, addr=0x30)
-#seesaw = seesaw.Seesaw(i2c, 0x36)
 
 # for channel in range(8):
 #     if mplexer[channel].try_lock():
@@ -56,15 +50,14 @@ for i, controller in enumerate(controllers):
     controller.rotary.encoder = rotaryio.IncrementalEncoder(controller.rotary)
     controller.rotary.last_position = None
 
-
-# socketHelper = SocketHelper()
+if(not printInputsMode):
+    socketHelper = SocketHelper()
 
 while True:
     for i, controller in enumerate(controllers):
         # negate the position to make clockwise rotation positive
         position = -controller.rotary.encoder.position
-        # TODO: Should be an interface or class that represents godots input event action (action, pressed and strength)
-        # https://docs.godotengine.org/en/stable/classes/class_inputeventaction.html
+        # TODO: Should ensure to match interface in global\ControllerInput.cs
         inputs = []
 
         if position != controller.rotary.last_position:
@@ -84,7 +77,7 @@ while True:
             controller.neokey.pixels[0] = 0x0
             inputs.append({ "Action": f"{i}_rotary_released", "Pressed": True })
         
-        if len(inputs) > 0:
-            # socketHelper.sendMessage(json.dumps(inputs, default=lambda o: o.__dict__))
+        if printInputsMode:
             print(inputs)
-
+        elif len(inputs) > 0:
+            socketHelper.sendMessage(json.dumps(inputs, default=lambda o: o.__dict__))

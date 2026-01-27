@@ -1,3 +1,6 @@
+#Test TCP connectivity
+"""Simple socket connectivity"""
+
 import socket
 import time
 
