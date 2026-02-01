@@ -9,7 +9,6 @@ class SocketHelper():
         self.socket = socket.socket(socket.AF_INET , socket.SOCK_STREAM)
         self.socket.connect((self.host , self.port))
         
-
     def sendMessage(self, msg):
         print ("Sending message: " + msg)
         self.socket.send(msg.encode('utf8'))
