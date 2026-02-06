@@ -1,52 +1,57 @@
 using Godot;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-
 public partial class ControllerSocket : Node
 {
+	private const int socketPort = 1031;
+	private Socket connection {get; set;} = null;
+
 	public override void _Ready()
 	{
-		Server();
+		StartServer();
 	}
 
-	// Called every frame. 'delta' is the elapsed time since the previous frame.
-	public override void _Process(double delta)
+	public async Task SendMessage(List<ControllerMessage> messages)
 	{
+		if (connection == null)
+			return;
+		
+		await connection.SendAsync(JsonSerializer.Serialize(messages).ToAsciiBuffer(), SocketFlags.None);
 	}
 
-	private async Task Client()
+	private async Task StartController()
 	{
-		using var socket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-		await socket.ConnectAsync(new IPEndPoint(IPAddress.Loopback, 8080));
-
-		Console.WriteLine("Type into the console to echo the contents");
-
-		var ns = new NetworkStream(socket);
-		var readTask = Console.OpenStandardInput().CopyToAsync(ns);
-		var writeTask = ns.CopyToAsync(Console.OpenStandardOutput());
-
-		// Quit if any of the tasks complete
-		await Task.WhenAny(readTask, writeTask);
+		Process process = new Process();
+		process.StartInfo = new ProcessStartInfo
+		{
+			WindowStyle = ProcessWindowStyle.Normal,
+			FileName = "python.exe",
+			Arguments = "./controller/main.py"
+		};
+		process.Start();
 	}
 
-	private async Task Server()
+	private async Task StartServer()
 	{
 		var listenSocket = new Socket(SocketType.Stream, ProtocolType.Tcp);
-		listenSocket.Bind(new IPEndPoint(IPAddress.Loopback, 1031));
+		listenSocket.Bind(new IPEndPoint(IPAddress.Loopback, socketPort));
 
 		GD.Print($"Listening on {listenSocket.LocalEndPoint}");
-
 		listenSocket.Listen();
+
+		StartController();
 
 		while (true)
 		{
 			// Wait for a new connection to arrive
-			var connection = await listenSocket.AcceptAsync();
+			connection = await listenSocket.AcceptAsync();
 
 			// We got a new connection spawn a task to so that we can echo the contents of the connection
 			_ = Task.Run(async () =>
@@ -63,22 +68,15 @@ public partial class ControllerSocket : Node
 							break;
 						}
 
-						// to send data back to the connection
-						// await connection.SendAsync(buffer[..read], SocketFlags.None);
 						string resultString = Encoding.UTF8.GetString(buffer[..read]);
 						GD.Print(resultString);
 						var inputs = JsonSerializer.Deserialize<ControllerInput[]>(resultString, new JsonSerializerOptions {PropertyNameCaseInsensitive = true});
 						foreach(var input in inputs)
 						{
-							// GetViewport().PushInput(input.AsInputEventAction());
 							var inputAction = input.AsInputEventAction();
 							Input.ParseInputEvent(inputAction);
 							// Input.ActionRelease(input.Action);
 						}
-
-						// CallDeferred("emit_signal", SignalName.OnControllerMessageReceived, input);
-						// There exists issues in calling emit signal from a thread so defer as above
-						// EmitSignal(SignalName.OnControllerMessageReceived, result);
 					}
 				}
 				catch(Exception e)

@@ -1,4 +1,5 @@
 import socket
+import json
 
 class SocketHelper():
     def __init__(self, host = "127.0.0.1", port = 1031, buffer_size = 1024):
@@ -13,6 +14,11 @@ class SocketHelper():
         print ("Sending message: " + msg)
         self.socket.send(msg.encode('utf8'))
 
-        # if expecting response but don't worry about it rn as this blocks
-        # data = self.socket.recv(self.buffer_size).decode('utf-8')
-        # print ("Data reveived: " +  data)
+    def getMessage(self):
+        try:
+            msg = self.socket.recv(self.buffer_size).decode('utf-8')
+            jsonMsg = json.loads(msg)
+            return jsonMsg
+        except e:
+            print(e)
+            pass

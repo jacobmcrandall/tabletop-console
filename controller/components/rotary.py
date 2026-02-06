@@ -39,6 +39,6 @@ class Rotary():
         
         return inputs
 
-    def setColor(self, color=0x0, brightness=1.0):
+    def setColor(self, color=(0,0,0), brightness=1.0):
         self.pixel.brightness = brightness
         self.pixel.fill(color)

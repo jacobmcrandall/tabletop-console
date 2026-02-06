@@ -56,6 +56,38 @@ project/assembly_name="console"
 "deadzone": 0.0,
 "events": []
 }
+0_k0_pressed={
+"deadzone": 0.2,
+"events": []
+}
+0_k1_pressed={
+"deadzone": 0.2,
+"events": []
+}
+0_k2_pressed={
+"deadzone": 0.2,
+"events": []
+}
+0_k3_pressed={
+"deadzone": 0.2,
+"events": []
+}
+1_k0_pressed={
+"deadzone": 0.2,
+"events": []
+}
+1_k1_pressed={
+"deadzone": 0.2,
+"events": []
+}
+1_k2_pressed={
+"deadzone": 0.2,
+"events": []
+}
+1_k3_pressed={
+"deadzone": 0.2,
+"events": []
+}
 
 [rendering]
 

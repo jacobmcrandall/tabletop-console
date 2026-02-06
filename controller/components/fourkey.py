@@ -4,9 +4,17 @@ class FourKey():
     def __init__(self, playerIndex: int, bus, addr=0x30):
         self.playerIndex = playerIndex
         self.fourKey = NeoKey1x4(bus, addr=addr)
+        self.lastState = [False, False, False, False]
     
     def getActions(self):
-        return []
+        inputs = []
+        keyRange = range(4)
+        for i in keyRange:
+            if not self.lastState[i] == self.fourKey[i]:
+                inputs.append({"Action": f"{self.playerIndex}_k{i}_pressed", "Pressed": self.fourKey[i] })
+                self.lastState[i] = self.fourKey[i]
 
-    def setColor(self, index, color=0x0):
+        return inputs
+
+    def setColor(self, index, color=(0,0,0)):
         self.fourKey.pixels[index] = color
