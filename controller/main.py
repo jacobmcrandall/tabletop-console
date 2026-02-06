@@ -46,14 +46,16 @@ while True:
             print(inputs)
         else:
             socketHelper.sendMessage(json.dumps(inputs, default=lambda o: o.__dict__))
-            componentsMessages = socketHelper.getMessage()
-            for message in componentsMessages:
-                #TODO: Prolly just parse the message to a class and pass messages entirely to components to handle
-                hexColor = (int(message["R"]), int(message["B"]), int(message["G"]))
-                brightness = float(message["Brightness"])
-                index = int(message["Index"])
 
-                if(message["KeyType"] == 'r'):
-                    controller.rotary.setColor(hexColor, brightness)
-                elif(message["KeyType"] == 'f'):
-                    controller.fourkey.setColor(index, hexColor)
+            if not useEmulator:
+                componentsMessages = socketHelper.getMessage()
+                for message in componentsMessages:
+                    #TODO: Prolly just parse the message to a class and pass messages entirely to components to handle
+                    hexColor = (int(message["R"]), int(message["B"]), int(message["G"]))
+                    brightness = float(message["Brightness"])
+                    index = int(message["Index"])
+
+                    if(message["KeyType"] == 'r'):
+                        controller.rotary.setColor(hexColor, brightness)
+                    elif(message["KeyType"] == 'f'):
+                        controller.fourkey.setColor(index, hexColor)
